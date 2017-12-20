@@ -1,10 +1,17 @@
 <?php
 
 session_start();
-include('structure');
+error_reporting(-1);
+include('structure.php');
+error_reporting(-1);
 call_header();
-
+error_reporting(-1);
 echo '
+<style>
+td {
+	border: 1px solid #000;
+}
+</style>
 <table>
 <tr>
 <th>Title</th>
@@ -15,7 +22,15 @@ echo '
 <th>Read?</th>
 </tr>
 ';
-$conn = new PDO();
+    $dsn = 'mysql:dbname=book_catalogue;host=127.0.0.1';
+    $user = 'root';
+    $password = 'toor';
+    
+    try {
+        $conn = new PDO($dsn, $user, $password);
+    } catch (PDOException $e) {
+        echo 'Connection failed: ' . $e->getMessage();
+    }
 $sql = '
     SELECT
         book.isbn,
@@ -29,18 +44,18 @@ $sql = '
     LEFT JOIN
         user_book
     ON
-        book.isbn = user_book.isbn
-    WHERE user_book.user_id = :user_id
+        (book.isbn = user_book.isbn) AND (user_book.user_id = ' . $_SESSION['user_id'] . ')
 
 ';
 
-foreach ($conn-query($sql) AS $book) {
-    echo '<tr>
+foreach ($conn->query($sql) AS $book) {
+	echo '<tr>
 <td>' . $book['title'] . '</td>
-<td>' . $book['authors'] . '</td>
-<td>' . $book['genres'] . '</td>
+<td>' . $book['author'] . '</td>
+<td>' . $book['genre'] . '</td>
 <td>' . $book['year'] . '</td>
 <td>' . $book['isbn'] . '</td>
+<td>' . $book['is_read'] . '</td>
 </tr>
 ';
 }

@@ -2,12 +2,11 @@
 
 $conn = new PDO('localhost', 'root', 'toor');
 $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
-// @todo: draw up diagrams for database
-// One user can hold multiple books
+
 // A book can have multiple copies... but would it? Not likely for a personal library
 // Then again, I have five versions of The Hobbit. I haven't read any of them since I was about eight.
 // Let's keep `book` and `copy_of_book` separate.
-
+// At the very least, it could be useful for future dev.
 $options = ['cost => 11'];
 
 $sql_strings = '
