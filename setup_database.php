@@ -8,6 +8,8 @@ $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, 0);
 // Then again, I have five versions of The Hobbit. I haven't read any of them since I was about eight.
 // Let's keep `book` and `copy_of_book` separate.
 
+$options = ['cost => 11'];
+
 $sql_strings = '
 	CREATE DATABASE
 		`book_catalogue`;
@@ -21,20 +23,63 @@ $sql_strings = '
 		`password` VARCHAR(64) NOT NULL,
 		`access_level` VARCHAR(6) NOT NULL,
 		PRIMARY KEY (id),
-		CONSTRAINT `access_level` CHECK (`access_level` IN (`user`, `admin`, `master`))
+		CONSTRAINT `access_level` CHECK (`access_level` IN (`user`, `admin`))
 	);
 
-	INSERT INTO users (username, password, access_level) VALUES (\'test\', \'test\', \'user\');
+	INSERT INTO users (username, password, access_level) VALUES (\'user\', \'' . password_hash('test', PASSWORD_BCRYPT, $options) . '\', \'user\'),(\'admin\',\''.password_hash('test', PASSWORD_BCRYPT, $options).'\',\'admin\');
 
 	CREATE TABLE `books` (
-		`isbn` INTEGER NOT NULL,
+		`isbn` VARCHAR(13) NOT NULL,
 		`title` VARCHAR() NOT NULL,
 		`author` VARCHAR() NOT NULL,
-		`publisher` VARCHAR() NOT NULL,
-		`year` VARCHAR(4) NOT NULL,
-		`is_out` BOOLEAN NOT NULL,
+        `genre` VARCHAR(100),
+		`publisher` VARCHAR(),
+		`year` VARCHAR(4),
 		PRIMARY KEY(`isbn`)
 	);
+
+    INSERT INTO `books` (
+        isbn,
+        title,
+        author,
+        publisher,
+        year,
+        genre
+    ) VALUES (
+        \'0000000000001\',
+        \'The Hobbit\',
+        \'J.R.R. Tolkien\',
+        \'\',
+        \'\',
+        \'High Fantasy\'
+    ), (
+        \'1234567891233\',
+        \'Prelude to Foundation\',
+        \'Isaac Asimov\',
+        \'Doubleday\',
+        \'1988\',
+        \'Science Fiction\'
+    ), (
+        \'978-0-06-105638-3\',
+        \'Foundation\'s Fear\',
+        \'Gregory Benford\',
+        \'Harper Prism\',
+        \'1997\',
+        \'Science Fiction\'
+    ), (
+        \'0-553-29335-4\',
+        \'Foundation\',
+        \'Isaac Asimov\',
+        \'Gnome Press\',
+        \'1951\',
+        \'Science Fiction\'
+    ), (
+        \'\',
+        \'\',
+        \'\',
+        \'\',
+        \'\'
+    );
 
 	CREATE TABLE `author` (
 		`id`,
